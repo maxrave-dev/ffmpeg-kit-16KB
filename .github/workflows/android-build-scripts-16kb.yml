@@ -61,7 +61,9 @@ jobs:
           fi
           cp "$AAR_PATH" "ffmpeg-kit-main-ndk-r25-16k.aar"
       - name: Publish maven
-        run: ./gradlew publishAllPublicationsToMavenCentral
+        run: |
+          cd android
+          ./gradlew publishAllPublicationsToMavenCentral
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
