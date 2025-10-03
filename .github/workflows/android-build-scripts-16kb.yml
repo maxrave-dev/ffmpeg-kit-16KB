@@ -43,11 +43,11 @@ jobs:
         run: ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --uninstall "cmake;3.10.2.4988404" "cmake;3.18.1"
       - name: set up android ndk r25 (16k support)
         run: |
-          curl -L -s "https://storage.googleapis.com/android-build/builds/aosp-ndk-release-r23-linux-linux/12186248/38c84da1ab0dd31ea40c857d2c9ee77450d9d71d76e60ac2ccd33d379babc534/android-ndk-12186248-linux-x86_64.zip?GoogleAccessId=gcs-sign%40android-builds-project.google.com.iam.gserviceaccount.com&Expires=1757434143&Signature=oK1FSeU9JpfoBkEqBZk%2FVmTH%2B1JJ09Dlv%2BsXblxpBTBq1kBA%2B42UPzbBpb%2BNy%2BIliEoWd2lO9Xbc92Lmzl1CiDyFwtzsxYE11nwUNNVWsjLvc0K0SO1%2F8j4p8b8eo5Zq5gc%2Bq7SamsrgelSUDSJfcYkDNR%2BE%2FyRpJgvtOqra%2FmEjw85pDrFMXFjZrSikYGjy%2Fl4E8TJRr%2BKh1BBkTEY5Oxvx3ia53LEzKE9bKKpFmFjZ9iXp%2BHh5ZSFPYZPrTMAeROSHlKARwvW35Bqgr%2FIyKHkSLKOk5%2FcbDud5iQwjuIB0l3MQTtkYr2TeDRh2BNzM82Z8MOwUfoncAI6nfj2%2Few%3D%3D" -o ndk.zip
+          curl -L -s "https://dl.google.com/android/repository/android-ndk-r23c-linux.zip" -o ndk.zip
           unzip -q -o ndk.zip -d .ndk
           echo "ANDROID_NDK_ROOT=$PWD/.ndk/$(ls .ndk)" >> $GITHUB_ENV
       - name: run the build script
-        run: ./android.sh -d --full --enable-gpl --disable-arm-v7a
+        run: ./android.sh -s --enable-gpl --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-twolame --enable-vo-amrwbenc --enable-android-media-codec --enable-android-zlib --disable-arm-v7a --disable-x86
       - name: prepare and upload main aar
         run: |
           AAR_PATH=$(find prebuilt -type f -name 'ffmpeg-kit.aar')
@@ -68,52 +68,10 @@ jobs:
         if: ${{ failure() }}
         run: '[[ -f ./src/ffmpeg/ffbuild/config.log ]] && tail -50 ./src/ffmpeg/ffbuild/config.log'
 
-  build-lts-on-linux:
-    name: android lts on linux (ndk-r25-16k)
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v4
-      - name: set up adopt jdk 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-      - name: prerequisites
-        run: ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --uninstall "cmake;3.10.2.4988404" "cmake;3.18.1"
-      - name: set up android ndk r25 (16k support)
-        run: |
-          curl -L -s "https://storage.googleapis.com/android-build/builds/aosp-ndk-release-r23-linux-linux/12186248/38c84da1ab0dd31ea40c857d2c9ee77450d9d71d76e60ac2ccd33d379babc534/android-ndk-12186248-linux-x86_64.zip?GoogleAccessId=gcs-sign%40android-builds-project.google.com.iam.gserviceaccount.com&Expires=1757434143&Signature=oK1FSeU9JpfoBkEqBZk%2FVmTH%2B1JJ09Dlv%2BsXblxpBTBq1kBA%2B42UPzbBpb%2BNy%2BIliEoWd2lO9Xbc92Lmzl1CiDyFwtzsxYE11nwUNNVWsjLvc0K0SO1%2F8j4p8b8eo5Zq5gc%2Bq7SamsrgelSUDSJfcYkDNR%2BE%2FyRpJgvtOqra%2FmEjw85pDrFMXFjZrSikYGjy%2Fl4E8TJRr%2BKh1BBkTEY5Oxvx3ia53LEzKE9bKKpFmFjZ9iXp%2BHh5ZSFPYZPrTMAeROSHlKARwvW35Bqgr%2FIyKHkSLKOk5%2FcbDud5iQwjuIB0l3MQTtkYr2TeDRh2BNzM82Z8MOwUfoncAI6nfj2%2Few%3D%3D" -o ndk.zip
-          unzip -q -o ndk.zip -d .ndk
-          echo "ANDROID_NDK_ROOT=$PWD/.ndk/$(ls .ndk)" >> $GITHUB_ENV
-      - name: run the build script
-        run: ./android.sh -d --lts --full --enable-gpl --disable-arm-v7a
-      - name: prepare and upload lts aar
-        run: |
-          AAR_PATH=$(find prebuilt -type f -name 'ffmpeg-kit.aar')
-          if [ -z "$AAR_PATH" ]; then
-            echo "Error: ffmpeg-kit.aar not found in prebuilt directory."
-            exit 1
-          fi
-          mv "$AAR_PATH" "ffmpeg-kit-lts-ndk-r25-16k.aar"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ffmpeg-kit-lts-aar
-          path: ffmpeg-kit-lts-ndk-r25-16k.aar
-          if-no-files-found: error
-      - name: print build logs
-        if: ${{ always() }}
-        run: cat build.log
-      - name: print ffbuild logs
-        if: ${{ failure() }}
-        run: '[[ -f ./src/ffmpeg/ffbuild/config.log ]] && tail -50 ./src/ffmpeg/ffbuild/config.log'
-
   create-release:
     name: create github release
     # This job will only start if BOTH of the jobs above complete successfully.
-    needs: [build-main-on-linux, build-lts-on-linux]
+    needs: [build-main-on-linux]
     runs-on: ubuntu-latest
     # This job will only run if the workflow is started manually.
     if: github.event_name == 'workflow_dispatch'
