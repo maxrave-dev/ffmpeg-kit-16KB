@@ -63,6 +63,7 @@ jobs:
       - name: Publish maven
         run: |
           cd android
+          ./gradlew build
           ./gradlew publishAllPublicationsToMavenCentral
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
