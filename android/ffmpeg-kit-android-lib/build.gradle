@@ -1,10 +1,13 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+    id 'com.vanniktech.maven.publish'
+    id 'com.gradleup.nmcp'
+}
 
 android {
-    if (project.android.hasProperty("namespace")) {
-        namespace 'com.arthenica.ffmpegkit'
-    }
+    namespace 'io.github.maxrave_dev.ffmpeg_kit_audio'
     compileSdk 35
+    compileSdkVersion 35
     ndkVersion "22.1.7171670"
 
     defaultConfig {
@@ -38,14 +41,6 @@ android {
         unitTests.returnDefaultValues = true
         unitTests.all {
             systemProperty 'enable.ffmpeg.kit.test.mode', 'true'
-        }
-    }
-
-
-    publishing {
-        singleVariant('release') {
-            withJavadocJar()
-            withSourcesJar()
         }
     }
 }
