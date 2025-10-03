@@ -39,6 +39,10 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
+      - name: Apt update
+        run: sudo apt update
+      - name: Apt install prerequisites
+        run: sudo apt install autoconf automake libtool pkg-config curl git doxygen nasm cmake gcc gperf texinfo yasm bison autogen wget autopoint meson ragel groff gtk-doc-tools
       - name: prerequisites
         run: ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --uninstall "cmake;3.10.2.4988404" "cmake;3.18.1"
       - name: set up android ndk r25 (16k support)
