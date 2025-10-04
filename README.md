@@ -1,3 +1,10 @@
+# Audio version build and Maven Central support added for SimpMusic
+
+Add this line to your app-level build.gradle to use audio version from Maven Central
+```kotlin
+implementation("io.github.maxrave-dev:ffmpeg-kit-audio:6.0.0")
+```
+
 # 16KB Page Size Update
 This fork only aims to make ffmpeg-kit compatible with new android versions (API 35) which request all binaries to be rebuilt.
 Google request developers to build new with new r27 and r28 ndk but ffmpeg-kit has its own NDK compatibility table which supports only upto r25.</p>

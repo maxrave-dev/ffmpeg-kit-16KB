@@ -13,6 +13,7 @@ on:
       - 'scripts/**'
       - 'tools/**'
       - 'android.sh'
+      - 'README.md'
   pull_request:
     branches:
       - development
@@ -24,6 +25,7 @@ on:
       - 'scripts/**'
       - 'tools/**'
       - 'android.sh'
+      - 'README.md'
 
 jobs:
   build-main-on-linux:
