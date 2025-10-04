@@ -2,7 +2,7 @@
 
 Add this line to your app-level build.gradle to use audio version from Maven Central
 ```kotlin
-implementation("io.github.maxrave-dev:ffmpeg-kit-audio:6.0.0")
+implementation("io.github.maxrave-dev:ffmpeg-kit-audio:6.0.1")
 ```
 
 # 16KB Page Size Update
