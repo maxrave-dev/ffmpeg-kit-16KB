@@ -47,9 +47,9 @@ jobs:
         run: sudo apt install -y autoconf automake libtool pkg-config curl git doxygen nasm cmake gcc gperf texinfo yasm bison autogen wget autopoint meson ragel groff gtk-doc-tools
       - name: prerequisites
         run: ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --uninstall "cmake;3.10.2.4988404" "cmake;3.18.1"
-      - name: set up android ndk r25 (16k support)
+      - name: set up android ndk r23 (16k support)
         run: |
-          curl -L -s "https://dl.google.com/android/repository/android-ndk-r23c-linux.zip" -o ndk.zip
+          curl -L -s "https://storage.googleapis.com/android-build/builds/aosp-ndk-release-r23-linux-linux/12186248/38c84da1ab0dd31ea40c857d2c9ee77450d9d71d76e60ac2ccd33d379babc534/android-ndk-12186248-linux-x86_64.zip?GoogleAccessId=gcs-sign%40android-builds-project.google.com.iam.gserviceaccount.com&Expires=1759592471&Signature=TFhy4FWzWM3baWCXOKJxc3xVW2i1WpdJO7EHGbyqrKd4S8zt9R1kWU0lkXRM24Sb19cafh%2B%2B1YU%2F9YRjFGQNjFu31lJAHlhvU09IDXq9ZancMt9vbUBBMZ9YWwzMBRTp7sA1BUibmyczYD1nmeqzbLyGRxNV%2FqPpp6T29wpdHfJx2y8QXemR6Fa%2B%2FLEazEeBZqrKKmRFVfYHsRCf0oHqL1rs29x%2F0mw92GzK%2Bu%2BtF2UkWbASfM4CYR7%2BmRidC9uJCELORv%2BY6UJ%2FvBy6wBQOoi%2BbF6cNGweLVXVrOu4lGeWpfTxrszuiKyDqVd3%2BDaQOnWKJCYH8n5wFXOc%2F9w8%2Fjg%3D%3D&response-content-disposition=attachment" -o ndk.zip
           unzip -q -o ndk.zip -d .ndk
           echo "ANDROID_NDK_ROOT=$PWD/.ndk/$(ls .ndk)" >> $GITHUB_ENV
       - name: run the build script
