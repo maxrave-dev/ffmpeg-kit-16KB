@@ -50,6 +50,16 @@ jobs:
           curl -L -s "https://dl.google.com/android/repository/android-ndk-r23c-linux.zip" -o ndk.zip
           unzip -q -o ndk.zip -d .ndk
           echo "ANDROID_NDK_ROOT=$PWD/.ndk/$(ls .ndk)" >> $GITHUB_ENV
+      - name: run the build script
+        run: ./android.sh -s --enable-gpl --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-twolame --enable-vo-amrwbenc --enable-android-media-codec --enable-android-zlib --disable-arm64-v8a --disable-arm-v7a-neon --disable-arm-v7a --disable-x86
+      - name: prepare and upload main aar
+        run: |
+          AAR_PATH=$(find prebuilt -type f -name 'ffmpeg-kit.aar')
+          if [ -z "$AAR_PATH" ]; then
+            echo "Error: ffmpeg-kit.aar not found in prebuilt directory."
+            exit 1
+          fi
+          echo "AAR_PATH=$AAR_PATH" >> $GITHUB_ENV
       - name: Publish maven
         run: |
           cd android
@@ -65,7 +75,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-kit-main-aar
-          path: ffmpeg-kit-main-ndk-r25-16k.aar
+          path: ${{ env.AAR_PATH }}
           if-no-files-found: error
       - name: print build logs
         if: ${{ always() }}
