@@ -974,7 +974,12 @@ public class FFmpegKitConfig {
         String displayName = "unknown";
         try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
-                displayName = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME));
+                int columnIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME);
+                if (columnIndex >= 0) {
+                    displayName = cursor.getString(columnIndex);
+                } else {
+                    displayName = "unknown";
+                }
             }
         } catch (final Throwable t) {
             android.util.Log.e(TAG, String.format("Failed to get %s column for %s.%s", DocumentsContract.Document.COLUMN_DISPLAY_NAME, uri.toString(), Exceptions.getStackTraceString(t)));
